@@ -15,7 +15,7 @@ h1 {
 }
 
 div {
-  display: flex;
+
   margin-bottom: 15px;
 }
 
@@ -24,6 +24,10 @@ div {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+}
+
+.main {
+  display: flex;
 }
 
 #submit-button {
@@ -45,8 +49,10 @@ div {
   border: 1px solid #ddd;
   border-radius: 5px;
   margin-top: 20px;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
+
 
 
 .loading {
@@ -54,12 +60,34 @@ div {
   height: 30px;
   border: 5px solid #f3f3f3;
   border-radius: 50%;
-  border-top-color: #3498db; 
+  border-top-color: #3498db;
   animation: spin 1s linear infinite;
   margin: 0 auto;
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+#history {
+  margin-top: 20px;
+  flex-direction: column;
+}
+
+.card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 8px;
+  box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card h2 {
+  margin-top: 0;
 }

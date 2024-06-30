@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+
 	"net/http"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -93,8 +94,8 @@ func main() {
 	fs := http.FileServer(http.Dir("./public"))
 	http.Handle("/", fs)
 
-	log.Println("Server is running on port 8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Println("Server is running on port http://127.0.0.1:4000")
+	log.Fatal(http.ListenAndServe(":4000", nil))
 }
 
 func createTableIfNotExists(db *sql.DB) error {

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chrome AI</title>
@@ -12,11 +13,58 @@
 <body>
   <main>
     <h1>Drug Leaflet Generator</h1>
-    <div>
+    <div class="main">
       <input type="text" id="user-prompt" placeholder="Enter Drug name here">
       <button id="submit-button">Submit</button>
     </div>
-    <div id="result"></div>
+    <div id="result">
+    </div>
+    <div id="history"></div>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        fetchDrugsAndRender();
+        console.log("Page loaded");
+      });
+
+      async function fetchDrugsAndRender() {
+        try {
+          const response = await fetch("/bar");
+          if (!response.ok) {
+            throw new Error("Failed to fetch drugs data");
+          }
+
+          const drugs = await response.json();
+          renderDrugs(drugs);
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+
+      function renderDrugs(drugs) {
+        console.log(drugs);
+        const responseDiv = document.getElementById("history");
+        responseDiv.innerHTML = '';
+
+        drugs.forEach(drug => {
+          const card = document.createElement("div");
+          card.className = "card";
+
+          const name = document.createElement("h2");
+          name.textContent = drug.name;
+          card.appendChild(name);
+
+          const result = document.createElement("p");
+          const truncatedResult = drug.result.length > 200 ? drug.result.substring(0, 180) + "..." : drug.result;
+          const htmlContent = marked.parse(truncatedResult);
+          result.innerHTML = htmlContent;
+          card.appendChild(result);
+
+          responseDiv.appendChild(card);
+        });
+      }
+
+    </script>
   </main>
 </body>
+
 </html>
