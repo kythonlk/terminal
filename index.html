@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Supabase WebAssembly Example</title>
+    <script src="wasm_exec.js"></script>
+    <script>
+        async function run() {
+            const go = new Go();
+            const resp = await fetch("main.wasm");
+            const wasm = await WebAssembly.instantiateStreaming(resp, go.importObject);
+            go.run(wasm.instance);
+
+            // Prepare data to insert
+            const tableName = "test";
+            const primaryKey = "id";
+            const data = {
+                "id": "32323",
+                "name": "value1",
+                "ad": "value2"
+            };
+            const result = insertData(tableName, data, primaryKey);
+            console.log(result + "this"); // Log the result to the consol
+            document.getElementById("result").textContent = result;
+            // Bind button click event
+            // document.getElementById("insertButton").onclick = function() {
+               
+                
+            // };
+        }
+    </script>
+</head>
+<body onload="run()">
+    <h1>Supabase WebAssembly Example</h1>
+    <button id="insertButton">Insert Data</button>
+    <p id="result">Result will be displayed here</p>
+</body>
+</html>
