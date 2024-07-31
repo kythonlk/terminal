@@ -1,37 +1,152 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Supabase WebAssembly Example</title>
-    <script src="wasm_exec.js"></script>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Terminal Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="./wasm_exec.js"></script>
+    <style>
+      #terminal {
+        overflow: auto;
+      }
+      #output::-webkit-scrollbar {
+        width: 20px;
+      }
+      #output::-webkit-scrollbar-thumb {
+        background-color: #4a5568;
+        border-radius: 6px;
+      }
+      #output::-webkit-scrollbar-thumb:hover {
+        background-color: #2d3748;
+      }
+      #output::-webkit-scrollbar-track {
+        background-color: #1a202c;
+      }
+      #output {
+        max-height: calc(100% - 3rem);
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #4a5568 #1a202c;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-black text-green-400 font-mono h-screen flex items-center justify-center"
+  >
+    <div
+      id="window"
+      class="w-4/5 max-w-6xl h-[600px] border-2 border-gray-700 rounded-lg flex flex-col"
+    >
+      <div
+        id="title-bar"
+        class="flex justify-between items-center p-2 bg-gray-800 rounded-t-lg"
+      >
+        <div id="title" class="font-bold">Terminal</div>
+        <div id="window-controls">
+          <button class="text-white hover:text-red-500" onclick="closeWindow()">
+            X
+          </button>
+        </div>
+      </div>
+      <div id="terminal" class="p-4 flex-grow flex flex-col justify-end">
+        <div
+          id="output"
+          class="overflow-hidden flex-grow mb-4 whitespace-pre-line"
+        ></div>
+        <div id="input-line" class="flex items-center">
+          <span class="text-yellow-500 mr-2">$</span>
+          <input
+            type="text"
+            id="input"
+            class="bg-black text-green-400 border-none flex-grow focus:outline-none"
+            autofocus
+          />
+        </div>
+      </div>
+    </div>
     <script>
-        async function run() {
-            const go = new Go();
-            const resp = await fetch("main.wasm");
-            const wasm = await WebAssembly.instantiateStreaming(resp, go.importObject);
-            go.run(wasm.instance);
+      let wasmLoaded = false;
 
-            // Prepare data to insert
-            const tableName = "test";
-            const primaryKey = "id";
-            const data = {
-                "id": "32323",
-                "name": "value1",
-                "ad": "value2"
-            };
-            const result = insertData(tableName, data, primaryKey);
-            console.log(result + "this"); // Log the result to the consol
-            document.getElementById("result").textContent = result;
-            // Bind button click event
-            // document.getElementById("insertButton").onclick = function() {
-               
-                
-            // };
+      async function initWasm() {
+        const go = new Go();
+        const response = await fetch("main.wasm");
+        const wasm = await response.arrayBuffer();
+        const { instance } = await WebAssembly.instantiate(
+          wasm,
+          go.importObject
+        );
+        go.run(instance);
+        wasmLoaded = true;
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        initWasm().catch((err) => {
+          console.error("Failed to load WebAssembly module:", err);
+        });
+
+        const terminal = document.getElementById("terminal");
+        const inputField = document.getElementById("input");
+        const output = document.getElementById("output");
+
+        inputField.focus();
+
+        terminal.addEventListener("click", function () {
+          inputField.focus();
+        });
+
+        inputField.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" && this.value.trim() !== "") {
+            let command = this.value.trim();
+            this.value = "";
+
+            if (command === "6") {
+              clearOutput();
+            } else {
+              let result = executeCommand(command);
+              appendOutput(result);
+            }
+
+            inputField.focus();
+          }
+        });
+
+        appendOutput("Welcome! Type '1' for commands.");
+      });
+
+      function executeCommand(command) {
+        if (!wasmLoaded) {
+          return "WebAssembly not loaded.";
         }
+
+        if (typeof window.executeCommand !== "function") {
+          return "WebAssembly function not available.";
+        }
+
+        try {
+          return window.executeCommand(command);
+        } catch (err) {
+          console.error("Error calling WebAssembly function:", err);
+          return "Error executing command.";
+        }
+      }
+
+      function appendOutput(text) {
+        const output = document.getElementById("output");
+        const newOutput = document.createElement("div");
+        newOutput.textContent = text;
+        newOutput.className = "mb-2";
+        output.appendChild(newOutput);
+        output.scrollTop = output.scrollHeight;
+      }
+
+      function clearOutput() {
+        document.getElementById("output").innerHTML = "";
+      }
+
+      function closeWindow() {
+        window.location.href = "/";
+      }
     </script>
-</head>
-<body onload="run()">
-    <h1>Supabase WebAssembly Example</h1>
-    <button id="insertButton">Insert Data</button>
-    <p id="result">Result will be displayed here</p>
-</body>
+  </body>
 </html>
