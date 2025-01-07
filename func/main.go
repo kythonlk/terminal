@@ -25,15 +25,14 @@ func executeCommand(this js.Value, p []js.Value) interface{} {
 	switch command {
 	case "1":
 		result = `Commands: 
-  1 - About me 
-  2 - My skills 
-  3 - My projects
+  2 - About me 
+  3 - My skills 
   4 - Work experience
   5 - Contact info
-  6 - Clear terminal
+  6 - Random joke
   7 - Current date and time
   8 - System information
-  9 - Random joke`
+  9 - Clear terminal`
 	case "2":
 		result = "I'm Kavindu Harshana, a full stack developer. I work with Go lang in backend, React and React Native in front end."
 	case "3":
@@ -65,13 +64,13 @@ Contact:
   Email: kythonlk@gmail.com
   GitHub: github.com/kythonlk`
 	case "6":
-		result = ""
+		result = getRandomJoke()		
 	case "7":
 		result = fmt.Sprintf("Current date and time: %s", time.Now().Format("2006-01-02 15:04:05"))
 	case "8":
 		result = getSystemInfo()
 	case "9":
-		result = getRandomJoke()
+		result = ""
 	default:
 		result = fmt.Sprintf("Unknown command: %s. Type '1' for commands.", command)
 	}
@@ -92,10 +91,10 @@ func getSystemInfo() string {
        |___/                                          
                                                                                           
  
-OS:       Kythonlk OS
-Kernel:   Kythonlk posix
-Architecture: WASM
-Host:     kythonlkOS
+OS:             Kythonlk OS
+Kernel:         Kythonlk posix
+Architecture:   WASM
+Host:           kythonlkOS
 `
 }
 
